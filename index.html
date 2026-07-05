@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชำระเงิน & ช่องทางติดต่อร้านค้า</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka (น่ารัก) & Kanit (ทันสมัยอ่านง่าย) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons สำหรับไอคอนนำทางต่างๆ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bunny-primary: #8F9E8B;
+            --bunny-primary-rgb: 143, 158, 139;
+            --bunny-dark: #3B4A37;
+            --bg-gradient-start: #F4F7F4;
+            --bg-gradient-end: #E6EDE4;
+            --card-glass: rgba(255, 255, 255, 0.85);
+            --bank-card-bg: linear-gradient(135deg, #8F9E8B 0%, #5C6C58 100%);
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            transition: background 0.5s ease-in-out;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bunny-font {
+            font-family: 'Fredoka', 'Kanit', sans-serif;
+        }
+
+        /* อนิเมชั่นตกแต่งหน้าเว็บให้ดูมีระดับ */
+        @keyframes floatingObj {
+            0% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.3; }
+            50% { transform: translateY(-25px) rotate(180deg) scale(1.1); opacity: 0.6; }
+            100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.3; }
+        }
+
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatingObj 12s infinite ease-in-out;
+        }
+
+        /* แก้มกระต่ายน่ารักดุ๊กดิ๊ก */
+        @keyframes bunnyHop {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(0.98); }
+        }
+        .bunny-avatar-container {
+            animation: bunnyHop 6s infinite ease-in-out;
+        }
+
+        /* หูขยับได้เมื่อมีปฏิสัมพันธ์ */
+        .bunny-avatar-container:hover .ear-l {
+            transform: rotate(-18deg) translateY(-2px);
+        }
+        .bunny-avatar-container:hover .ear-r {
+            transform: rotate(18deg) translateY(-2px);
+        }
+        
+        .ear-l, .ear-r {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: bottom center;
+        }
+
+        /* ปุ่มไลน์เปล่งประกายดึงดูดสายตา */
+        @keyframes pulseGlow {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(6, 199, 85, 0.4), 0 10px 25px rgba(6, 199, 85, 0.25);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 20px 8px rgba(6, 199, 85, 0.15), 0 12px 30px rgba(6, 199, 85, 0.35);
+                transform: scale(1.02);
+            }
+        }
+        .btn-line-pulse {
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        /* การ์ดสไตล์โฮโลแกรมเงาพรีเมียม */
+        .holo-card {
+            background: var(--bank-card-bg);
+            box-shadow: 0 15px 35px -5px rgba(var(--bunny-primary-rgb), 0.35),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .holo-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 30%,
+                rgba(255, 255, 255, 0.2) 40%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+            pointer-events: none;
+        }
+
+        .holo-card:hover::before {
+            left: 100%;
+            top: 100%;
+            transition: all 1.2s ease;
+        }
+
+        /* เอฟเฟกต์โหลด QR ค่อยๆ เฟดอย่างสวยงาม */
+        .qr-glow {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05), inset 0 0 15px rgba(var(--bunny-primary-rgb), 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-emerald-100 selection:text-emerald-900">
+
+    <!-- Floating Sparkles & Leaves in Background -->
+    <div class="floating-element top-[10%] left-[5%] w-8 h-8 opacity-20" style="animation-delay: 0s; animation-duration: 14s;">
+        <svg viewBox="0 0 24 24" fill="none" class="text-current" style="color: var(--bunny-primary)"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="floating-element top-[45%] right-[8%] w-10 h-10 opacity-20" style="animation-delay: 2s; animation-duration: 18s;">
+        <svg viewBox="0 0 24 24" fill="none" class="text-current" style="color: var(--bunny-primary)"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/></svg>
+    </div>
+    <div class="floating-element bottom-[15%] left-[8%] w-12 h-12 opacity-15" style="animation-delay: 4s; animation-duration: 20s;">
+        <svg viewBox="0 0 24 24" fill="none" class="text-current" style="color: var(--bunny-primary)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor" opacity="0.3"/></svg>
+    </div>
+
+    <!-- กล่องแจ้งเตือนก๊อปปี้สำเร็จแบบป๊อปอัพพรีเมียม -->
+    <div id="toast-notif" class="fixed top-6 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md text-white px-6 py-3.5 rounded-2xl shadow-2xl z-50 flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-4 border border-slate-700/50">
+        <span class="text-emerald-400 text-xl"><i class="fa-solid fa-circle-check"></i></span>
+        <div class="flex flex-col">
+            <span id="toast-text" class="text-sm font-semibold">คัดลอกข้อมูลเรียบร้อยแล้วค่ะ!</span>
+            <span class="text-[10px] text-slate-300">สามารถนำไปวางในแอปธนาคารได้ทันที</span>
+        </div>
+    </div>
+
+    <!-- คอนเทนเนอร์หลักของหน้าชำระเงินแบบ One-Page -->
+    <main class="w-full max-w-md mx-auto px-4 pt-10 pb-16 flex-1 flex flex-col justify-center relative z-10">
+        
+        <!-- บล็อกการ์ดหลักกระจกฝ้า (Glassmorphism Core Card) -->
+        <div class="backdrop-blur-xl rounded-[38px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] border border-white/60 p-6 md:p-8 relative overflow-hidden w-full" style="background-color: var(--card-glass);">
+            
+            <!-- แสงแฟลร์กลมตกแต่งในกล่องข้อความ -->
+            <div class="absolute -top-16 -right-16 w-36 h-36 rounded-full blur-2xl pointer-events-none transition-all duration-500" style="background-color: rgba(var(--bunny-primary-rgb), 0.2);" id="glow-decor-1"></div>
+            <div class="absolute -bottom-16 -left-16 w-36 h-36 rounded-full blur-2xl pointer-events-none transition-all duration-500" style="background-color: rgba(var(--bunny-primary-rgb), 0.15);" id="glow-decor-2"></div>
+
+            <!-- ส่วนหัว: โลโก้กระต่ายขยับได้ & ชื่อร้านค้า -->
+            <div class="flex flex-col items-center text-center relative z-10 mb-6">
+                <!-- ตราประทับร้านค้าแนะนำเพื่อความน่าเชื่อถือ -->
+                <span class="mb-3 px-3 py-1 rounded-full bg-white/80 border border-amber-200 text-amber-700 text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-certificate text-xs text-amber-500"></i> Verified Seller ร้านค้าปลอดภัย
+                </span>
+
+                <!-- โครงสร้างอวตารน้องกระต่ายสุดพรีเมียม -->
+                <div class="w-28 h-28 relative bunny-avatar-container mb-4 filter drop-shadow-lg cursor-pointer">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <!-- หูซ้ายพรีเมียมและเฉดเงา -->
+                        <ellipse cx="38" cy="24" rx="8" ry="22" class="ear-l" fill="var(--bunny-primary)" transform="rotate(-12 38 24)" />
+                        <ellipse cx="38" cy="24" rx="4" ry="14" class="ear-l animate-pulse" fill="#FFF5EB" transform="rotate(-12 38 24)" opacity="0.9" />
+                        
+                        <!-- หูขวาพรีเมียมและเฉดเงา -->
+                        <ellipse cx="62" cy="24" rx="8" ry="22" class="ear-r" fill="var(--bunny-primary)" transform="rotate(12 62 24)" />
+                        <ellipse cx="62" cy="24" rx="4" ry="14" class="ear-r animate-pulse" fill="#FFF5EB" transform="rotate(12 62 24)" opacity="0.9" opacity="0.9" />
+                        
+                        <!-- หน้าและมิติดวงตากลมโตวิ้งๆ -->
+                        <circle cx="50" cy="62" r="28" fill="var(--bunny-primary)" />
+                        <ellipse cx="50" cy="64" rx="23" ry="21" fill="#FDFBF7" />
+                        
+                        <!-- ดวงตาที่มีประกายดาว -->
+                        <circle cx="39" cy="58" r="4.5" fill="#2C3A27" />
+                        <circle cx="37.5" cy="56" r="1.5" fill="#FFFFFF" />
+                        <circle cx="40.5" cy="59.5" r="0.8" fill="#FFFFFF" />
+                        
+                        <circle cx="61" cy="58" r="4.5" fill="#2C3A27" />
+                        <circle cx="59.5" cy="56" r="1.5" fill="#FFFFFF" />
+                        <circle cx="62.5" cy="59.5" r="0.8" fill="#FFFFFF" />
+                        
+                        <!-- แก้มส้มพาสเทลน่าเอ็นดู -->
+                        <ellipse cx="32" cy="66" rx="5" ry="4" fill="#FFAAA6" opacity="0.7" />
+                        <ellipse cx="68" cy="66" rx="5" ry="4" fill="#FFAAA6" opacity="0.7" />
+                        
+                        <!-- จมูกและปากยิ้มพรีเมียม -->
+                        <polygon points="50,63 47,61 53,61" fill="#2C3A27" />
+                        <path d="M 46 66.5 Q 50 69 50 66.5 Q 50 69 54 66.5" fill="none" stroke="#2C3A27" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </div>
+                
+                <!-- ชื่อร้านและคำอธิบายสวยสะดุดตา -->
+                <h1 id="shop-title" class="bunny-font text-3xl font-extrabold tracking-wide transition duration-300" style="color: var(--bunny-dark);">ชื่อร้านค้า</h1>
+                <p id="shop-description" class="text-xs text-slate-500 mt-2 px-3 leading-relaxed max-w-[280px]">คำอธิบายร้านค้า</p>
+            </div>
+
+            <!-- ส่วนจัดแสดง QR Code ชำระเงินอัจฉริยะ -->
+            <div class="bg-white/60 backdrop-blur-md rounded-3xl p-5 border border-white/80 flex flex-col items-center mb-6 text-center relative z-10 qr-glow">
+                <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-4 flex items-center gap-1.5">
+                    <i class="fa-solid fa-qrcode text-xs text-slate-400"></i> Scan to Pay / สแกนผ่านแอปธนาคาร
+                </span>
+                
+                <!-- กรอบรูปคิวอาร์โค้ดที่มีความละเมียดละไมขึ้น -->
+                <div class="relative w-52 h-52 bg-white rounded-2xl flex flex-col items-center justify-center p-3 shadow-md border border-slate-100/60 mb-4 overflow-hidden group">
+                    <div class="absolute top-0 left-0 right-0 h-8 bg-[#003D6B] flex items-center justify-center gap-1.5 shadow-sm">
+                        <span class="text-[11px] font-extrabold text-white tracking-wider bunny-font flex items-center gap-1">
+                            <i class="fa-solid fa-bolt text-[9px] text-amber-300 animate-bounce"></i> PROMPTPAY พร้อมเพย์
+                        </span>
+                    </div>
+                    <!-- รูป QR Code จากระบบพร้อมเพย์จริง -->
+                    <img id="payment-qr" src="" alt="Payment QR Code" class="w-40 h-40 mt-6 object-contain group-hover:scale-105 transition-all duration-300">
+                </div>
+
+                <!-- ข้อมูลปลายทางพร้อมเพย์ที่คัดลอกได้ -->
+                <div class="space-y-1">
+                    <p class="text-[10px] font-semibold text-slate-400 tracking-wider">ชื่อบัญชีรับเงินพร้อมเพย์</p>
+                    <p id="promptpay-name-display" class="text-base font-bold text-slate-700 leading-tight">ชื่อผู้รับเงิน</p>
+                    
+                    <div class="flex items-center justify-center gap-2 mt-1.5">
+                        <span id="promptpay-id-display" class="text-xs font-mono font-bold text-slate-600 bg-slate-100/80 px-2.5 py-1 rounded-xl border border-slate-200/50">081-234-5678</span>
+                        <button onclick="copyToClipboard('promptpay-raw-id')" class="text-slate-400 hover:text-emerald-600 transition-all duration-200 p-1.5 hover:bg-emerald-50 rounded-lg" title="คัดลอกเบอร์พร้อมเพย์">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ส่วนแสดงบัตรโอนเงินผ่านธนาคารสุดพรีเมียม (Holo-Card) -->
+            <div id="bank-card" class="holo-card rounded-3xl p-5 text-white mb-6">
+                <!-- แถบเครือข่ายธนาคารจำลอง -->
+                <div class="flex items-center justify-between border-b border-white/20 pb-3 mb-4">
+                    <span class="text-[9px] font-bold tracking-widest text-white/75 uppercase flex items-center gap-1">
+                        <i class="fa-solid fa-building-columns"></i> Bank Account / โอนเข้าบัญชี
+                    </span>
+                    <span id="bank-tag" class="px-3 py-1 rounded-full text-[10px] font-extrabold text-white shadow-sm border border-white/30 backdrop-blur-sm bg-black/10">กสิกรไทย</span>
+                </div>
+                
+                <!-- ข้อมูลบัตรเครดิตสมจริงเพื่อความพรีเมียม -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[9px] text-white/70 font-medium tracking-widest uppercase">Account Number</p>
+                            <p id="bank-account-num" class="font-bold text-xl md:text-2xl tracking-wider bunny-font leading-none text-shadow mt-1">000-0-00000-0</p>
+                        </div>
+                        <button onclick="copyToClipboard('bank-raw-num')" class="bg-white/20 hover:bg-white/30 text-white p-2 rounded-xl border border-white/20 transition-all duration-200 backdrop-blur-sm self-end" title="คัดลอกเลขบัญชี">
+                            <i class="fa-solid fa-copy text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex justify-between items-end pt-1">
+                        <div>
+                            <p class="text-[9px] text-white/70 font-medium tracking-widest uppercase">Account Owner</p>
+                            <p id="bank-account-name" class="text-xs font-semibold mt-0.5 tracking-wide text-white/95">-</p>
+                        </div>
+                        <!-- ชิปการ์ดจำลองเพิ่มความสมจริง -->
+                        <div class="w-8 h-6 bg-amber-300/80 rounded-md border border-amber-200/50 shadow-inner flex items-center justify-center opacity-85">
+                            <svg viewBox="0 0 24 24" class="w-5 h-5 text-amber-900/45"><path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ปุ่มแจ้งชำระเงินผ่านไลน์แบบมีประกายเด่นชัด -->
+            <a href="#" id="line-cta-btn" target="_blank" class="w-full btn-line-pulse bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-6 rounded-2xl font-bold text-sm text-center flex items-center justify-center gap-2.5 mb-6 smooth-transition border border-emerald-500/20 shadow-lg shadow-emerald-500/20">
+                <i class="fa-brands fa-line text-2xl"></i>
+                <span>ชำระเงินแล้ว? กดแจ้งโอนเงินที่ LINE 🐰</span>
+            </a>
+
+            <!-- คำแนะนำการโอนเงินฉบับเรียบหรู -->
+            <div class="bg-white/40 border border-white/80 rounded-2xl p-4 mb-6">
+                <h3 class="text-[11px] font-bold text-slate-500 mb-3 flex items-center gap-1.5 uppercase tracking-wider">
+                    <i class="fa-solid fa-circle-info" id="steps-icon" style="color: var(--bunny-primary);"></i> ขั้นตอนง่ายๆ ในการสั่งซื้อ
+                </h3>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="space-y-1">
+                        <span class="inline-flex w-5 h-5 items-center justify-center rounded-full text-[10px] font-bold" id="step-num-1" style="background-color: var(--bg-gradient-end); color: var(--bunny-dark);">1</span>
+                        <p class="text-[9px] font-bold text-slate-500">สแกน/โอนเงิน</p>
+                    </div>
+                    <div class="space-y-1 flex flex-col items-center">
+                        <span class="inline-flex w-5 h-5 items-center justify-center rounded-full text-[10px] font-bold" id="step-num-2" style="background-color: var(--bg-gradient-end); color: var(--bunny-dark);">2</span>
+                        <p class="text-[9px] font-bold text-slate-500">แคปหน้าจอสลิป</p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="inline-flex w-5 h-5 items-center justify-center rounded-full text-[10px] font-bold" id="step-num-3" style="background-color: var(--bg-gradient-end); color: var(--bunny-dark);">3</span>
+                        <p class="text-[9px] font-bold text-slate-500">คลิกปุ่มส่งแจ้งโอน</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- บล็อกโซเชียลสำหรับการติดต่อเพิ่มเติมด้านล่างการ์ด -->
+            <div id="socials-wrapper" class="relative z-10 text-center mb-1">
+                <p class="text-[9px] font-bold tracking-widest text-slate-400 uppercase mb-3">ช่องทางอื่นๆ ในการติดตามเรา</p>
+                <div class="flex justify-center flex-wrap gap-3.5" id="socials-container"></div>
+            </div>
+
+        </div>
+
+        <!-- ตัวเลือกเปลี่ยนสไตล์ตามสีสันที่ชอบด้านล่าง -->
+        <div class="mt-8 flex flex-col items-center gap-2">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">สไตล์ชุดโทนสีร้านค้า</span>
+            <div class="flex items-center gap-3 bg-white/60 p-2 rounded-full border border-white/80 shadow-sm backdrop-blur-md">
+                <button onclick="setGlobalTheme('sage')" class="w-6 h-6 rounded-full bg-[#8F9E8B] border-2 border-white flex items-center justify-center text-white shadow-sm hover:scale-110 transition duration-150" title="Sage Meadow Green">
+                    <i class="fa-solid fa-check text-[10px] hidden" id="chk-sage"></i>
+                </button>
+                <button onclick="setGlobalTheme('caramel')" class="w-6 h-6 rounded-full bg-[#CFA87B] border-2 border-white flex items-center justify-center text-white shadow-sm hover:scale-110 transition duration-150" title="Sweet Caramel Warm">
+                    <i class="fa-solid fa-check text-[10px] hidden" id="chk-caramel"></i>
+                </button>
+                <button onclick="setGlobalTheme('sky')" class="w-6 h-6 rounded-full bg-[#89A8C9] border-2 border-white flex items-center justify-center text-white shadow-sm hover:scale-110 transition duration-150" title="Cozy Sky Blue">
+                    <i class="fa-solid fa-check text-[10px] hidden" id="chk-sky"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ท้ายขอบล่างระบุลิขสิทธิ์ความปลอดภัย -->
+        <footer class="text-center mt-6 text-[9px] text-slate-400 tracking-wider flex items-center justify-center gap-1" id="footer-text">
+            <i class="fa-solid fa-shield-halved text-[10px]"></i> ชำระเงินปลอดภัย ผ่านระบบจัดการของ Cozy Bunny Portal
+        </footer>
+
+    </main>
+
+    <script>
+        /*
+          * แถบกำหนดค่าตั้งค่าหลักของร้านค้า (SHOP CONFIGURATION)
+          * คุณสามารถแก้ไขรายละเอียดตรงนี้เพื่อให้ระบบสร้างหน้าแสดงผลข้อมูลโอนเงินของลูกค้าโดยอัตโนมัติ
+        */
+        const SHOP_CONFIG = {
+            title: "Cozy Bunny Store",
+            description: "ยินดีต้อนรับสู่หน้ารับชำระเงินและช่องทางติดต่อร้านกระต่ายแสนอบอุ่นค่ะ สแกนโอนแล้วส่งหลักฐานได้ทันทีค่ะ 🐇✨",
+            theme: "sage", // ชุดโทนสีตั้งต้นที่ต้องการเปิดตัวเลือกประกอบด้วย: 'sage', 'caramel', 'sky'
+            
+            promptpayID: "0812345678", // เบอร์โทรศัพท์พร้อมเพย์ หรือ บัตรประชาชนของลูกค้า
+            promptpayName: "บจก. คอซี่ บันนี่ สโตร์ (สำนักงานใหญ่)", // ชื่อเต็มเจ้าของพร้อมเพย์
+            
+            bankName: "กสิกรไทย", // ชื่อยี่ห้อธนาคารเช่น: กสิกรไทย, ไทยพาณิชย์, กรุงเทพ, กรุงไทย
+            bankAccountNumber: "098-1-23456-7", // เลขบัญชีธนาคารของร้านค้า
+            bankAccountOwner: "นางสาวสมหญิง น่ารักใจดี", // ชื่อจริงเจ้าของบัญชีผู้รับโอน
+            
+            lineLink: "https://line.me/ti/p/~@bunny_shop", // ลิงก์ช่องทางติดต่อหรือแจ้งโอนทาง Line ของร้านค้า
+            
+            socials: {
+                facebook: "https://facebook.com/bunny_cozy",
+                instagram: "https://instagram.com/bunny_cozy",
+                tiktok: "https://tiktok.com/@bunny_cozy",
+                website: "https://www.cozybunbuns.com"
+            }
+        };
+
+        // ชุดสีแต่ละธีมที่กำหนดสีพื้นและไล่ระดับการ์ดแบบพรีเมียม
+        const THEMES_PRESETS = {
+            sage: {
+                bgStart: '#F4F7F4',
+                bgEnd: '#E6EDE4',
+                bunnyPrimary: '#8F9E8B',
+                bunnyPrimaryRGB: '143, 158, 139',
+                bunnyDark: '#3B4A37',
+                cardGlass: 'rgba(255, 255, 255, 0.82)',
+                bankCardBg: 'linear-gradient(135deg, #8F9E8B 0%, #5C6C58 100%)'
+            },
+            caramel: {
+                bgStart: '#FAF6F0',
+                bgEnd: '#F2E8D9',
+                bunnyPrimary: '#CFA87B',
+                bunnyPrimaryRGB: '207, 168, 123',
+                bunnyDark: '#5C4427',
+                cardGlass: 'rgba(255, 255, 255, 0.82)',
+                bankCardBg: 'linear-gradient(135deg, #DDB68A 0%, #94714A 100%)'
+            },
+            sky: {
+                bgStart: '#F0F5FA',
+                bgEnd: '#E1EBF5',
+                bunnyPrimary: '#89A8C9',
+                bunnyPrimaryRGB: '137, 168, 201',
+                bunnyDark: '#2D435C',
+                cardGlass: 'rgba(255, 255, 255, 0.82)',
+                bankCardBg: 'linear-gradient(135deg, #98B8D9 0%, #537599 100%)'
+            }
+        };
+
+        // ตารางรหัสสีประจำธนาคารต่างๆ ของไทยเพื่อนำมาจับคู่สีกราฟิกตกแต่งการ์ด
+        const BANK_COLORS = {
+            'กสิกรไทย': '#138B45',
+            'ไทยพาณิชย์': '#4E2B81',
+            'กรุงเทพ': '#003399',
+            'กรุงไทย': '#00A1F1',
+            'พร้อมเพย์': '#003D6B',
+            'ทหารไทยธนชาต': '#F15A22',
+            'กรุงศรี': '#FFC425'
+        };
+
+        let rawBankAccountNumber = "";
+        let rawPromptPayNumber = "";
+
+        function renderClientPage() {
+            document.title = `${SHOP_CONFIG.title} - ชำระเงิน & ช่องทางติดต่อร้านค้า`;
+            document.getElementById('shop-title').innerText = SHOP_CONFIG.title;
+            document.getElementById('shop-description').innerText = SHOP_CONFIG.description;
+
+            // คัดเฉพาะตัวเลขเพื่อใช้สำหรับสร้าง PromptPay QR
+            rawPromptPayNumber = SHOP_CONFIG.promptpayID.replace(/[^0-9]/g, '');
+            document.getElementById('promptpay-id-display').innerText = SHOP_CONFIG.promptpayID;
+            document.getElementById('promptpay-name-display').innerText = SHOP_CONFIG.promptpayName;
+            
+            // สร้างลิงก์ QR Code มาตรฐานด้วย API promptpay.io แบบสด
+            document.getElementById('payment-qr').src = `https://promptpay.io/${rawPromptPayNumber}.png`;
+
+            // บัญชีธนาคาร
+            rawBankAccountNumber = SHOP_CONFIG.bankAccountNumber.replace(/[^0-9]/g, '');
+            document.getElementById('bank-account-num').innerText = SHOP_CONFIG.bankAccountNumber;
+            document.getElementById('bank-account-name').innerText = `ชื่อบัญชี: ${SHOP_CONFIG.bankAccountOwner}`;
+            
+            const bName = SHOP_CONFIG.bankName;
+            const bTag = document.getElementById('bank-tag');
+            bTag.innerText = bName;
+
+            // ปรับลิงก์ติดต่อไลน์
+            const lineCta = document.getElementById('line-cta-btn');
+            if (SHOP_CONFIG.lineLink) {
+                lineCta.href = SHOP_CONFIG.lineLink;
+                lineCta.style.display = 'flex';
+            } else {
+                lineCta.style.display = 'none';
+            }
+
+            // จัดโครงสร้างโซเชียลมีเดีย
+            const container = document.getElementById('socials-container');
+            container.innerHTML = '';
+
+            const socialMeta = {
+                facebook: { icon: 'fa-brands fa-facebook-f', bg: 'hover:bg-blue-50 hover:text-blue-600 border-slate-100' },
+                instagram: { icon: 'fa-brands fa-instagram', bg: 'hover:bg-rose-50 hover:text-rose-600 border-slate-100' },
+                tiktok: { icon: 'fa-brands fa-tiktok', bg: 'hover:bg-slate-100 hover:text-black border-slate-100' },
+                website: { icon: 'fa-solid fa-globe', bg: 'hover:bg-emerald-50 hover:text-emerald-700 border-slate-100' }
+            };
+
+            let addedSocials = 0;
+            Object.keys(SHOP_CONFIG.socials).forEach(key => {
+                const link = SHOP_CONFIG.socials[key];
+                if (link && link.trim() !== '') {
+                    const meta = socialMeta[key];
+                    const anchor = document.createElement('a');
+                    anchor.href = link;
+                    anchor.target = "_blank";
+                    anchor.className = `w-11 h-11 rounded-full bg-white text-slate-500 flex items-center justify-center border shadow-sm transition-all duration-300 hover:scale-110 ${meta.bg}`;
+                    anchor.innerHTML = `<i class="${meta.icon} text-lg"></i>`;
+                    container.appendChild(anchor);
+                    addedSocials++;
+                }
+            });
+
+            if (addedSocials === 0) {
+                document.getElementById('socials-wrapper').classList.add('hidden');
+            } else {
+                document.getElementById('socials-wrapper').classList.remove('hidden');
+            }
+
+            // แสดงผลสไตล์ตั้งต้น
+            setGlobalTheme(SHOP_CONFIG.theme);
+        }
+
+        function setGlobalTheme(themeKey) {
+            const theme = THEMES_PRESETS[themeKey] || THEMES_PRESETS.sage;
+            const r = document.documentElement;
+
+            // ซ่อนติ๊กเช็คทุกจุดก่อน
+            document.getElementById('chk-sage').classList.add('hidden');
+            document.getElementById('chk-caramel').classList.add('hidden');
+            document.getElementById('chk-sky').classList.add('hidden');
+            
+            const chkNode = document.getElementById(`chk-${themeKey}`);
+            if (chkNode) chkNode.classList.remove('hidden');
+
+            // ใช้ CSS Variables เพื่อเปลี่ยนสีและเอฟเฟกต์ไล่เงาแบบนุ่มนวล
+            r.style.setProperty('--bunny-primary', theme.bunnyPrimary);
+            r.style.setProperty('--bunny-primary-rgb', theme.bunnyPrimaryRGB);
+            r.style.setProperty('--bunny-dark', theme.bunnyDark);
+            r.style.setProperty('--bg-gradient-start', theme.bgStart);
+            r.style.setProperty('--bg-gradient-end', theme.bgEnd);
+            r.style.setProperty('--card-glass', theme.cardGlass);
+            r.style.setProperty('--bank-card-bg', theme.bankCardBg);
+
+            // ค่อยๆ สลับหน้าใบหน้าและองค์ประกอบ SVG
+            const stepsColorSet = ['1', '2', '3'];
+            stepsColorSet.forEach(id => {
+                const stepNode = document.getElementById(`step-num-${id}`);
+                if (stepNode) {
+                    stepNode.style.backgroundColor = theme.bgEnd;
+                    stepNode.style.color = theme.bunnyDark;
+                }
+            });
+            document.getElementById('steps-icon').style.color = theme.bunnyPrimary;
+            SHOP_CONFIG.theme = themeKey;
+        }
+
+        // ระบบก๊อปปี้ข้อมูลอัจฉริยะ (Copy Utility)
+        function showToastMessage(message) {
+            const toast = document.getElementById('toast-notif');
+            const toastText = document.getElementById('toast-text');
+            
+            toastText.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }, 2800);
+        }
+
+        function copyToClipboard(sourceType) {
+            let targetString = "";
+            let userDisplay = "";
+
+            if (sourceType === 'bank-raw-num') {
+                targetString = rawBankAccountNumber;
+                userDisplay = "เลขบัญชีธนาคาร";
+            } else if (sourceType === 'promptpay-raw-id') {
+                targetString = rawPromptPayNumber;
+                userDisplay = "เบอร์พร้อมเพย์";
+            }
+
+            if (!targetString) return;
+
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = targetString;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToastMessage(`คัดลอก ${userDisplay} สำเร็จแล้วค่ะ!`);
+            } catch (err) {
+                showToastMessage(`กรุณากดเลือกและคัดลอกข้อมูลด้วยตัวเองนะคะ`);
+            }
+            document.body.removeChild(tempTextArea);
+        }
+
+        // สั่งให้เริ่มต้นทำงานทันทีเมื่อไฟล์โหลดเสร็จสมบูรณ์
+        window.onload = function() {
+            renderClientPage();
+        };
+    </script>
+</body>
+</html>
